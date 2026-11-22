@@ -3,132 +3,346 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Casebook — evidence organizer for family court</title>
-<meta name="description" content="Local-only evidence organizer for self-represented parents in family court. Your records never leave your devices.">
+<title>Casebook — your evidence, your device, your case</title>
+<meta name="description" content="A local-only evidence organizer for parents in family court. Seal screenshots, texts and emails with SHA-256 fingerprints, build a custody calendar, and hand your lawyer a court-ready package — all without an account or the cloud.">
 <style>
-  :root{--bg:#0e1420;--card:#16202f;--ink:#dfe7f0;--dim:#8fa3b8;--acc:#4da3ff;--acc2:#37c48a;--line:#26374d}
+  :root{
+    --bg:#171410; --bg2:#100e0b; --card:#1f1b15; --card2:#26211a;
+    --line:#332c22; --ink:#ece3d0; --dim:#a3987f; --faint:#6e6455;
+    --acc:#d9a648; --acc-ink:#1c1508; --acc-soft:rgba(217,166,72,.14);
+    --blue:#7fa8d0; --sage:#9cc184;
+    --serif:Georgia,'Iowan Old Style','Palatino Linotype',serif;
+    --sans:'Segoe UI',system-ui,-apple-system,sans-serif;
+  }
   *{box-sizing:border-box;margin:0}
-  body{background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
-  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 64px}
-  h1{font-size:2rem;letter-spacing:-.5px}
-  .tag{color:var(--dim);margin:8px 0 28px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin:14px 0}
-  .pick{display:flex;gap:10px;margin:6px 0 16px}
-  .pick button{flex:1;padding:16px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:1rem;cursor:pointer}
-  .pick button.on{border-color:var(--acc);background:#123055;box-shadow:0 0 0 1px var(--acc) inset}
-  .dl{display:block;width:100%;padding:15px;margin:10px 0;border-radius:10px;border:0;background:var(--acc);color:#fff;font-size:1.05rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none}
-  .dl.alt{background:#1d2c42;border:1px solid var(--line);color:var(--ink);font-weight:500}
-  .dl.dis{background:#1d2c42;color:var(--dim);cursor:default;border:1px dashed var(--line);font-weight:400}
-  .note{color:var(--dim);font-size:.88rem;margin:6px 2px}
-  .soon{color:var(--dim);font-style:italic}
-  .price{display:flex;gap:12px;flex-wrap:wrap}
-  .price div{flex:1;min-width:150px;border:1px solid var(--line);border-radius:10px;padding:16px;text-align:center}
-  .price b{font-size:1.6rem;display:block}
-  .hl{border-color:var(--acc2)!important}
-  .trust{font-size:.85rem;color:var(--dim);margin-top:20px;line-height:1.7}
-  .trust b{color:var(--ink)}
-  footer{margin-top:36px;color:var(--dim);font-size:.8rem;border-top:1px solid var(--line);padding-top:16px}
-  a{color:var(--acc)}
-  .rec{color:var(--acc2);font-size:.8rem;font-weight:600}
+  body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans)}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ── hero ── */
+  .hero{padding:88px 0 56px;text-align:center}
+  .mark{font:500 15px var(--serif);letter-spacing:.28em;text-transform:uppercase;color:var(--acc);margin-bottom:18px}
+  h1{font:500 clamp(2.1rem,5.4vw,3.4rem)/1.15 var(--serif);letter-spacing:-.01em;max-width:19ch;margin:0 auto}
+  h1 em{color:var(--acc);font-style:normal}
+  .sub{max-width:56ch;margin:20px auto 0;color:var(--dim);font-size:1.08rem}
+  .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+  .btn{display:inline-block;padding:14px 30px;border-radius:8px;font-weight:600;font-size:1rem;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+  .btn:hover{text-decoration:none;border-color:var(--faint)}
+  .btn.acc{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+  .btn.acc:hover{background:#e6b558}
+  .badges{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-top:30px;font-size:.83rem;color:var(--faint)}
+  .badges span::before{content:'✓ ';color:var(--sage)}
+
+  /* ── sections ── */
+  section{padding:56px 0}
+  .kicker{font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+  h2{font:500 clamp(1.5rem,3.4vw,2.1rem)/1.25 var(--serif);max-width:26ch}
+  .lede{color:var(--dim);max-width:62ch;margin-top:12px}
+  .alt{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+
+  /* problem */
+  .pain{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:30px}
+  .pain div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .pain b{display:block;margin-bottom:6px}
+  .pain p{color:var(--dim);font-size:.92rem;margin:0}
+
+  /* screenshots */
+  .shots{display:grid;gap:18px;margin-top:30px}
+  .shot{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);box-shadow:0 14px 44px rgba(0,0,0,.4)}
+  .shot img{display:block;width:100%}
+  .shot figcaption{padding:10px 16px;font-size:.82rem;color:var(--faint);border-top:1px solid var(--line)}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:720px){.duo{grid-template-columns:1fr}}
+
+  /* features */
+  .feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:30px}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px}
+  .feat h3{font-size:1.02rem;margin-bottom:8px}
+  .feat h3::before{content:'—';color:var(--acc);margin-right:8px}
+  .feat p{color:var(--dim);font-size:.92rem;margin:0}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px;counter-reset:s}
+  @media(max-width:720px){.steps{grid-template-columns:1fr}}
+  .steps div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;position:relative}
+  .steps div::before{counter-increment:s;content:counter(s);display:block;font:500 2rem var(--serif);color:var(--acc);margin-bottom:8px}
+  .steps p{color:var(--dim);font-size:.92rem;margin:0}
+
+  /* comparison */
+  .cmp{width:100%;border-collapse:collapse;margin-top:30px;font-size:.9rem}
+  .cmp th,.cmp td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  .cmp th{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .cmp td:not(:first-child),.cmp th:not(:first-child){text-align:center}
+  .cmp .us{color:var(--acc);font-weight:600}
+  .cmp .y{color:var(--sage)} .cmp .n{color:var(--faint)}
+  .cmp-note{font-size:.8rem;color:var(--faint);margin-top:10px}
+
+  /* pricing */
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
+  @media(max-width:720px){.tiers{grid-template-columns:1fr}}
+  .tier{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;text-align:center;display:flex;flex-direction:column}
+  .tier.hot{border-color:var(--acc);background:linear-gradient(180deg,rgba(217,166,72,.08),var(--card))}
+  .tier .name{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .tier .amt{font:500 2.4rem var(--serif);margin:10px 0 2px}
+  .tier .per{color:var(--faint);font-size:.85rem}
+  .tier ul{list-style:none;padding:0;margin:18px 0;font-size:.88rem;color:var(--dim);text-align:left}
+  .tier li{padding:5px 0 5px 22px;position:relative}
+  .tier li::before{content:'✓';color:var(--sage);position:absolute;left:2px}
+  .tier .btn{margin-top:auto}
+  .usd{font-size:.8rem;color:var(--faint);margin-top:14px;text-align:center}
+
+  /* faq */
+  details{border:1px solid var(--line);border-radius:10px;background:var(--card);margin:10px 0;padding:0}
+  details summary{cursor:pointer;padding:16px 20px;font-weight:600;list-style:none;color:var(--ink)}
+  details summary::before{content:'+';color:var(--acc);margin-right:10px;font-family:var(--serif)}
+  details[open] summary::before{content:'–'}
+  details p{padding:0 20px 16px;color:var(--dim);font-size:.92rem;margin:0}
+
+  /* trust strip + footer */
+  .trust{background:var(--acc-soft);border:1px solid rgba(217,166,72,.3);border-radius:14px;padding:26px;margin-top:30px}
+  .trust b{color:var(--acc)}
+  .trust p{color:var(--dim);font-size:.92rem;margin:8px 0 0}
+  footer{border-top:1px solid var(--line);padding:34px 0 50px;color:var(--faint);font-size:.82rem}
+  footer a{color:var(--dim)}
+  .fine{max-width:70ch;line-height:1.7}
+
+  /* download picker (kept from before) */
+  .pick{display:flex;gap:10px;margin:18px 0 14px}
+  .pick button{flex:1;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);font-size:.95rem;cursor:pointer;font-family:inherit}
+  .pick button.on{border-color:var(--acc);background:var(--acc-soft);color:var(--acc)}
+  .dl{display:block;width:100%;padding:14px;margin:9px 0;border-radius:10px;border:0;background:var(--acc);color:var(--acc-ink);font-size:1rem;font-weight:600;cursor:pointer;text-align:center}
+  .dl:hover{text-decoration:none;background:#e6b558}
+  .dl.alt{background:var(--card2);border:1px solid var(--line);color:var(--ink);font-weight:500}
+  .dl.dis{background:var(--card2);color:var(--faint);cursor:default;border:1px dashed var(--line);font-weight:400}
+  .dl.dis:hover{text-decoration:none;background:var(--card2)}
+  .note{color:var(--faint);font-size:.84rem;margin:5px 2px}
+  .soon{color:var(--faint);font-style:italic}
+  .rec{color:var(--sage);font-size:.78rem;font-weight:600}
+  .dl:not(.alt):not(.dis) .rec{color:rgba(28,21,8,.7)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Casebook</h1>
-  <p class="tag">An evidence organizer for family court — built for self-represented parents.
-  Everything stays on your devices. No account, no cloud, no one else can read your records.</p>
 
-  <div class="card">
-    <h2>Download</h2>
-    <div class="pick">
-      <button id="pick-pc" class="on" onclick="pick('pc')">💻 Computer</button>
-      <button id="pick-mob" onclick="pick('mob')">📱 Phone / tablet</button>
+<header class="hero wrap">
+  <div class="mark">Casebook</div>
+  <h1>Your evidence. Your device. <em>Your case.</em></h1>
+  <p class="sub">A local-only evidence organizer for parents in family court — built for the ones
+  defending themselves. Seal screenshots, texts and emails the moment they arrive. Build the
+  custody calendar. Hand your lawyer a court-ready package. No account. No cloud. No one
+  else can read your records — not even us.</p>
+  <div class="cta">
+    <a class="btn acc" href="#download">Download free</a>
+    <a class="btn" href="#how">See how it works</a>
+  </div>
+  <div class="badges">
+    <span>No account or sign-up</span>
+    <span>SHA-256 sealed originals</span>
+    <span>Works fully offline</span>
+    <span>14-day trial, no card</span>
+  </div>
+</header>
+
+<!-- ── the problem ── -->
+<section class="alt"><div class="wrap">
+  <div class="kicker">Why this exists</div>
+  <h2>A camera roll is not a case file.</h2>
+  <p class="lede">When you're the one on the defense, your credibility is everything. Scattered
+  screenshots, a text thread you'll never find again, a call you can't prove happened —
+  that's how good parents lose. And the tools made for this? They need your ex to sign up
+  too. Yours won't.</p>
+  <div class="pain">
+    <div><b>Screenshots get picked apart</b><p>"That could be edited." Sealed SHA-256 fingerprints taken at import make tampering provable — any change shows.</p></div>
+    <div><b>Memory loses to notes</b><p>Judges believe timestamps, not recollection. A dated jot beats "I think it was March" every single time.</p></div>
+    <div><b>Court tools need two players</b><p>OurFamilyWizard and TalkingParents only record what your coparent sends <i>inside their app</i>. Contested cases don't work like that.</p></div>
+    <div><b>Cloud means subpoena-able</b><p>Every comms platform stores your records on someone else's server. Casebook's vault lives on your machine, period.</p></div>
+  </div>
+</div></section>
+
+<!-- ── screenshots ── -->
+<section><div class="wrap">
+  <div class="kicker">Inside the app</div>
+  <h2>Built like a journal. Works like an evidence locker.</h2>
+  <div class="shots">
+    <figure class="shot"><img src="shots/casebook-timeline.png" alt="Timeline view — every message, call and event in order">
+      <figcaption>Every message, call and import lands on one timeline — ordered, attributed, sealed.</figcaption></figure>
+    <div class="duo">
+      <figure class="shot"><img src="shots/casebook-calendar.png" alt="Custody calendar with 2-2-3 rotation and time-share split">
+        <figcaption>Custody schedules (2-2-3, alternating weeks &amp; more) with automatic exchange days and a parenting-time split.</figcaption></figure>
+      <figure class="shot"><img src="shots/casebook-overview.png" alt="Home dashboard with quick note and attention items">
+        <figcaption>Home: quick-jot a timestamped note, see what needs attention today.</figcaption></figure>
     </div>
-
-    <div id="pc">
-      <a class="dl" id="dl-win" href="#">Download for Windows <span id="rec-win" class="rec"></span></a>
-      <a class="dl alt" id="dl-mac" href="#">macOS <span id="rec-mac" class="rec"></span></a>
-      <a class="dl alt" id="dl-lin" href="#">Linux (AppImage) <span id="rec-lin" class="rec"></span></a>
-      <a class="dl alt" id="dl-port" href="#">Windows portable (USB-stick, no install)</a>
-      <p class="note">Works offline after install. If Windows SmartScreen warns on an unsigned
-      build, choose “More info → Run anyway” — the app is safe, code signing is on the roadmap.</p>
-    </div>
-
-    <div id="mob" hidden>
-      <a class="dl" id="dl-apk" href="#">Android app (APK)</a>
-      <p class="note">Android will ask to allow “install from unknown sources” — normal for a
-      direct-download app. Play Store / F-Droid listing is on the roadmap.</p>
-      <a class="dl dis" href="#" onclick="return false">iPhone / iPad — <span class="soon">coming soon</span></a>
-      <p class="note">An iPhone companion is in development. For now the computer app can pull
-      photos and messages from any device over your home network.</p>
+    <div class="duo">
+      <figure class="shot"><img src="shots/casebook-guide.png" alt="Self-represented guide with required first-step courses">
+        <figcaption>Jurisdiction-aware guide — including the parenting courses your court requires before it will hear you.</figcaption></figure>
+      <figure class="shot"><img src="shots/casebook-steady.png" alt="Steady — wellbeing corner with encouragement">
+        <figcaption>Steady — a quiet corner for the days the process wears you down. Optional scripture, off by default.</figcaption></figure>
     </div>
   </div>
+</div></section>
 
-  <div class="card">
-    <h2>Try it free for 30 days</h2>
-    <p>The download <b>is</b> the trial — full features, no card, no sign-up. When the trial
-    ends your cases still open, verify, and export; a subscription keeps creating and importing
-    turned on.</p>
-    <div class="price">
-      <div class="hl"><b id="price-mo">$–</b>per month<br><span class="note">cancel anytime</span></div>
-      <div><b id="price-yr">$–</b>per year<br><span class="note">~2 months free</span></div>
-      <div><b id="price-lt">$–</b>once, forever<br><span class="note">single payment — never bills again</span></div>
-    </div>
-    <div class="small dim" style="margin-top:4px">Prices in USD.</div>
-    <a class="dl" id="subscribe" href="#">Subscribe</a>
-    <p class="note">After checkout you get a license key by email. Paste it into the app’s
-    License tab — it’s verified on your device, nothing phones home.</p>
+<!-- ── features ── -->
+<section class="alt"><div class="wrap">
+  <div class="kicker">What it does</div>
+  <h2>Everything after "keep the screenshot."</h2>
+  <div class="feats">
+    <div class="feat"><h3>Sealed evidence vault</h3><p>Every import is fingerprinted with SHA-256 and locked read-only. Re-verify anytime — originals provably untouched since day one.</p></div>
+    <div class="feat"><h3>Real importers</h3><p>Phone SMS/call exports, WhatsApp, Facebook/Messenger, .eml email, screenshots with OCR, call audio with local transcription.</p></div>
+    <div class="feat"><h3>Custody calendar + time-share</h3><p>Alternating weeks, 2-2-3, 3-4-4-3, 5-2-2-5 or your own pattern. Holiday rotation, exchange markers, and the % split lawyers use for support math.</p></div>
+    <div class="feat"><h3>17 report types</h3><p>Timelines, communication exhibits, expense rollups, a lawyer-handoff bundle with its own verification page — print or email.</p></div>
+    <div class="feat"><h3>Deadline radar</h3><p>Hearings, filings, tasks — reminders at 14, 7, 1 and 0 days. Recurring exchanges reschedule themselves.</p></div>
+    <div class="feat"><h3>Tone check</h3><p>Flags hostile wording in your own notes before they become exhibits read aloud in court. Local, advisory, never blocks.</p></div>
+    <div class="feat"><h3>Jurisdiction-aware guide</h3><p>Orientation for 46 jurisdictions: required parenting courses, terminology, court directory — written for self-reps, not lawyers.</p></div>
+    <div class="feat"><h3>Lawyer access, your terms</h3><p>A free guest login opens your case read-only at your machine — or send a self-verifying package. They never edit; they always see everything.</p></div>
+    <div class="feat"><h3>Truly local-only</h3><p>No account, no telemetry, no cloud sync. Optional hash-anchoring asks first and sends only a 32-byte fingerprint — never a file.</p></div>
   </div>
+</div></section>
+
+<!-- ── how it works ── -->
+<section id="how"><div class="wrap">
+  <div class="kicker">How it works</div>
+  <h2>Three steps between you and a file that holds up.</h2>
+  <div class="steps">
+    <div><b>Seal it</b><p>Drop in screenshots, exports, emails. Each gets a SHA-256 fingerprint and a read-only home — provably unchanged from that moment on.</p></div>
+    <div><b>Organize it</b><p>The timeline orders everything. Flag episodes, tag people, build the custody calendar, log exchanges and calls — while the guide shows your next step.</p></div>
+    <div><b>Hand it over</b><p>Generate the reports your lawyer actually needs, or a sealed package they can verify themselves in any browser. Print, email, or guest login.</p></div>
+  </div>
+</div></section>
+
+<!-- ── comparison ── -->
+<section class="alt"><div class="wrap">
+  <div class="kicker">The honest comparison</div>
+  <h2>Different tool for a different fight.</h2>
+  <p class="lede">Coparenting apps record communication between two willing parents. Casebook
+  builds the case file of the parent standing alone.</p>
+  <table class="cmp">
+    <tr><th></th><th>OurFamilyWizard</th><th>TalkingParents</th><th>Custody X&nbsp;Change</th><th class="us">Casebook</th></tr>
+    <tr><td>Needs your coparent to join</td><td class="n">yes</td><td class="n">yes</td><td class="y">no</td><td class="y us">no</td></tr>
+    <tr><td>Evidence sealed &amp; tamper-evident</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y us">SHA-256, read-only</td></tr>
+    <tr><td>Imports real-world evidence</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y us">SMS · WhatsApp · FB · email · OCR · call audio</td></tr>
+    <tr><td>Custody calendar + time-share %</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y us">✓</td></tr>
+    <tr><td>Court reports &amp; lawyer handoff</td><td class="n">~</td><td class="n">records only</td><td class="y">✓</td><td class="y us">17 reports + sealed bundle</td></tr>
+    <tr><td>Runs without internet</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y us">fully offline</td></tr>
+    <tr><td>Data stored on their servers</td><td class="n">yes</td><td class="n">yes</td><td class="n">yes</td><td class="y us">never</td></tr>
+    <tr><td>Price</td><td class="n">~$150–240/yr per parent</td><td class="n">~$10–15/mo</td><td class="n">~$17/mo</td><td class="y us">$20/mo · $150/yr · $500 once</td></tr>
+  </table>
+  <p class="cmp-note">Competitor features summarized from their public pages, Nov 2026 — check them yourself; we did.</p>
+</div></section>
+
+<!-- ── pricing + download ── -->
+<section id="download"><div class="wrap">
+  <div class="kicker">Download &amp; pricing</div>
+  <h2>Try it on a real case before you pay anything.</h2>
+  <p class="lede">The download <b>is</b> the trial — 14 days, every feature, no card, no sign-up.
+  When it ends your cases still open, verify, and export. Your data is never held hostage.</p>
+
+  <div class="pick">
+    <button id="pick-pc" class="on" onclick="pick('pc')">Computer</button>
+    <button id="pick-mob" onclick="pick('mob')">Phone / tablet</button>
+  </div>
+  <div id="pc">
+    <a class="dl" id="dl-win" href="#">Download for Windows <span id="rec-win" class="rec"></span></a>
+    <a class="dl alt" id="dl-mac" href="#">macOS <span id="rec-mac" class="rec"></span></a>
+    <a class="dl alt" id="dl-lin" href="#">Linux (AppImage) <span id="rec-lin" class="rec"></span></a>
+    <a class="dl alt" id="dl-port" href="#">Windows portable (USB-stick, no install)</a>
+    <p class="note">Works offline after install. If Windows SmartScreen warns on an unsigned build,
+    choose “More info → Run anyway” — the app is safe; code signing is on the roadmap.</p>
+  </div>
+  <div id="mob" hidden>
+    <a class="dl" id="dl-apk" href="#">Android app (APK)</a>
+    <p class="note">Android will ask to allow “install from unknown sources” — normal for a
+    direct-download app. Play Store / F-Droid listing is on the roadmap.</p>
+    <a class="dl dis" href="#" onclick="return false">iPhone / iPad — <span class="soon">coming soon</span></a>
+    <p class="note">The iPhone companion is in development. Meanwhile the computer app can pull
+    photos and messages from any device over your home network.</p>
+  </div>
+
+  <div class="tiers">
+    <div class="tier">
+      <div class="name">Monthly</div>
+      <div class="amt">$20</div><div class="per">per month · cancel anytime</div>
+      <ul><li>Every feature, no limits</li><li>Your cases stay openable forever</li><li>Updates included</li></ul>
+      <a class="btn" id="buy-mo" href="#">Subscribe</a>
+    </div>
+    <div class="tier hot">
+      <div class="name">Yearly — most chosen</div>
+      <div class="amt">$150</div><div class="per">per year · two months free</div>
+      <ul><li>Everything in Monthly</li><li>Covers a long proceeding</li><li>Updates included</li></ul>
+      <a class="btn acc" id="buy-yr" href="#">Subscribe</a>
+    </div>
+    <div class="tier">
+      <div class="name">Lifetime</div>
+      <div class="amt">$500</div><div class="per">once · never bills again</div>
+      <ul><li>Everything, forever</li><li>All future versions</li><li>For the marathon cases</li></ul>
+      <a class="btn" id="buy-lt" href="#">Buy once</a>
+    </div>
+  </div>
+  <p class="usd">Prices in USD. After checkout a license key arrives by email — paste it into
+  the app's License tab. Verified on your device; nothing phones home.</p>
 
   <div class="trust">
-    <b>What “local-only” means here:</b> your evidence files are sealed with SHA-256 fingerprints
-    on your own machine. The app never sends your records anywhere. The only optional network
-    feature — anchoring a hash to a public timestamp — asks first and sends only the hash, never a file.
+    <b>What “local-only” means here:</b>
+    <p>Your evidence files are sealed with SHA-256 fingerprints on your own machine. The app never
+    sends your records anywhere. The only optional network feature — anchoring a hash to a public
+    timestamp — asks first and sends only the hash, never a file. If our company disappeared
+    tomorrow, your cases would still open.</p>
   </div>
+</div></section>
 
-  <footer>
-    Casebook is an organizer, not a lawyer. Reports are drafts and review aids, not legal advice.
-    Family law differs everywhere — always check your local rules.
-    <br><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms of use</a>
-  </footer>
-</div>
+<!-- ── faq ── -->
+<section class="alt"><div class="wrap">
+  <div class="kicker">Questions</div>
+  <h2>Asked by people in your chair.</h2>
+  <div style="margin-top:22px">
+    <details><summary>Is this legal advice?</summary><p>No. Casebook organizes and preserves — it's a tool, like a binder that can't lose pages. The guide and statute flags are orientation written for self-represented people, not advice. Always check your local rules or talk to a lawyer when you can.</p></details>
+    <details><summary>What happens to my case if I cancel?</summary><p>Nothing. Your case is a folder on your device: sealed originals plus an index. It opens, verifies, and exports whether you're subscribed or not — the paid license only gates creating new cases and importing.</p></details>
+    <details><summary>Can my ex get my records?</summary><p>They're on your device, not a server — there's nothing to subpoena from us because we hold nothing. On your machine, the app lock and read-only "show to lawyer" mode control what anyone sees.</p></details>
+    <details><summary>Does the sealed hash actually matter in court?</summary><p>A SHA-256 fingerprint taken at import proves the file hasn't changed since — it's the same technique forensic examiners use. It doesn't guarantee admission (that's your judge and your rules of evidence), but it answers "how do we know this wasn't edited?"</p></details>
+    <details><summary>Why does Windows warn me at install?</summary><p>Unsigned apps get a SmartScreen prompt — it's about reputation, not a detected problem. Choose "More info → Run anyway." Code signing is on the roadmap; we ship builds as-is rather than make you wait.</p></details>
+    <details><summary>Windows only?</summary><p>Windows today, plus an Android companion for capture on the go. macOS, Linux and iOS are on the roadmap — the app is Electron + local files, so ports are a matter of build time.</p></details>
+  </div>
+</div></section>
+
+<footer><div class="wrap fine">
+  <b style="color:var(--ink)">Casebook</b> — an organizer, not a lawyer. Reports are drafts and
+  review aids, not legal advice. Family law differs everywhere; always check your local rules.
+  <br><br>
+  <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms of use</a>
+</div></footer>
 
 <script>
 // ── EDIT THESE BEFORE DEPLOYING ─────────────────────────────────────────────
-// Point RELEASES at wherever the built files are hosted. If you use GitHub
-// Releases, the URL pattern is already correct — just fill in owner + repo.
 const RELEASES = 'https://github.com/alexanderinnovationgroup-hash/casebook-site/releases/latest/download';
-const CHECKOUT = 'https://casebook.app/subscribe';   // payment page / provider link — TODO: real provider
-const PRICE_MO = '$20';                              // USD — LemonSqueezy checkout
-const PRICE_YR = '$150';
-const PRICE_LT = '$500';                             // lifetime, one payment
+// Paddle checkout links — paste all three when the store is approved.
+const CHECKOUT_MO = '#';   // monthly $20
+const CHECKOUT_YR = '#';   // yearly $150
+const CHECKOUT_LT = '#';   // lifetime $500
 const FILES = {
-  win:  'Casebook-Setup-0.1.1.exe',
-  port: 'Casebook-Setup-0.1.1.exe', // portable build not uploaded yet — installer covers it
-  mac:  null,                     // not built yet — "coming soon" handling below
-  lin:  null,
+  win:  'Casebook-Setup-0.1.7.exe',
+  port: 'Casebook-Setup-0.1.7.exe',
+  mac:  null, lin: null,
   apk:  'Casebook.apk',
 };
 // ─────────────────────────────────────────────────────────────────────────────
-
 const $ = id => document.getElementById(id);
-const set = (id, f) => { const el = $(id); if (!FILES[f]) { el.closest('a,button') && (el.closest('a,button').style.opacity = '.45'); el.textContent += ' — soon'; return; } el.href = `${RELEASES}/${FILES[f]}`; };
+const set = (id, f) => {
+  const el = $(id);
+  if (!FILES[f]) { el.classList.add('dis'); el.insertAdjacentHTML('beforeend',' — <span class="soon">coming soon</span>'); el.removeAttribute('href'); return; }
+  el.href = `${RELEASES}/${FILES[f]}`;
+};
 set('dl-win','win'); set('dl-port','port'); set('dl-mac','mac'); set('dl-lin','lin'); set('dl-apk','apk');
-$('subscribe').href = CHECKOUT;
-$('price-mo').textContent = PRICE_MO; $('price-yr').textContent = PRICE_YR; $('price-lt').textContent = PRICE_LT;
-
+$('buy-mo').href = CHECKOUT_MO; $('buy-yr').href = CHECKOUT_YR; $('buy-lt').href = CHECKOUT_LT;
+for (const id of ['buy-mo','buy-yr','buy-lt']) {
+  if ($(id).getAttribute('href') === '#') $(id).onclick = e => { e.preventDefault(); alert('Checkout is being set up — the 14-day free trial is live now, no card needed.'); };
+}
 const ua = navigator.userAgent, plat = navigator.platform || '';
-const isAndroid = /android/i.test(ua);
-const isIOS = /iphone|ipad|ipod/i.test(ua);
-const isMac = /mac/i.test(plat) && !isIOS;
-const isLinux = /linux/i.test(plat) && !isAndroid;
-
+const isAndroid = /android/i.test(ua), isIOS = /iphone|ipad|ipod/i.test(ua);
+const isMac = /mac/i.test(plat) && !isIOS, isLinux = /linux/i.test(plat) && !isAndroid;
 function pick(which){
   $('pc').hidden = which !== 'pc'; $('mob').hidden = which !== 'mob';
   $('pick-pc').classList.toggle('on', which === 'pc');
   $('pick-mob').classList.toggle('on', which === 'mob');
 }
-// Auto-pick the right tab + flag the likely download
 if (isAndroid || isIOS) pick('mob');
 if (isMac) $('rec-mac').textContent = '· probably you';
 else if (isLinux) $('rec-lin').textContent = '· probably you';
