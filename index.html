@@ -95,21 +95,21 @@
 // ── EDIT THESE BEFORE DEPLOYING ─────────────────────────────────────────────
 // Point RELEASES at wherever the built files are hosted. If you use GitHub
 // Releases, the URL pattern is already correct — just fill in owner + repo.
-const RELEASES = 'https://github.com/OWNER/REPO/releases/latest/download';
-const CHECKOUT = 'https://casebook.app/subscribe';   // payment page / provider link
+const RELEASES = 'https://github.com/alexanderinnovationgroup-hash/casebook-site/releases/latest/download';
+const CHECKOUT = 'https://casebook.app/subscribe';   // payment page / provider link — TODO: real provider
 const PRICE_MO = '$6';                              // set your real prices
 const PRICE_YR = '$60';
 const FILES = {
-  win:  'Casebook-Setup.exe',     // NSIS installer (rename on upload, or keep the versioned name)
-  port: 'Casebook-Portable.exe',  // portable exe
-  mac:  'Casebook.dmg',
-  lin:  'Casebook.AppImage',
+  win:  'Casebook-Setup-0.1.0.exe',
+  port: 'Casebook-Setup-0.1.0.exe', // portable build not uploaded yet — installer covers it
+  mac:  null,                     // not built yet — "coming soon" handling below
+  lin:  null,
   apk:  'Casebook.apk',
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
 const $ = id => document.getElementById(id);
-const set = (id, f) => { $(id).href = `${RELEASES}/${FILES[f]}`; };
+const set = (id, f) => { const el = $(id); if (!FILES[f]) { el.closest('a,button') && (el.closest('a,button').style.opacity = '.45'); el.textContent += ' — soon'; return; } el.href = `${RELEASES}/${FILES[f]}`; };
 set('dl-win','win'); set('dl-port','port'); set('dl-mac','mac'); set('dl-lin','lin'); set('dl-apk','apk');
 $('subscribe').href = CHECKOUT;
 $('price-mo').textContent = PRICE_MO; $('price-yr').textContent = PRICE_YR;
