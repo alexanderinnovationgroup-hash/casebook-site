@@ -72,7 +72,9 @@
     <div class="price">
       <div class="hl"><b id="price-mo">$–</b>per month<br><span class="note">cancel anytime</span></div>
       <div><b id="price-yr">$–</b>per year<br><span class="note">~2 months free</span></div>
+      <div><b id="price-lt">$–</b>once, forever<br><span class="note">single payment — never bills again</span></div>
     </div>
+    <div class="small dim" style="margin-top:4px">Prices in USD.</div>
     <a class="dl" id="subscribe" href="#">Subscribe</a>
     <p class="note">After checkout you get a license key by email. Paste it into the app’s
     License tab — it’s verified on your device, nothing phones home.</p>
@@ -97,8 +99,9 @@
 // Releases, the URL pattern is already correct — just fill in owner + repo.
 const RELEASES = 'https://github.com/alexanderinnovationgroup-hash/casebook-site/releases/latest/download';
 const CHECKOUT = 'https://casebook.app/subscribe';   // payment page / provider link — TODO: real provider
-const PRICE_MO = '$20';                              // set your real prices
+const PRICE_MO = '$20';                              // USD — LemonSqueezy checkout
 const PRICE_YR = '$150';
+const PRICE_LT = '$675';                             // lifetime, one payment
 const FILES = {
   win:  'Casebook-Setup-0.1.1.exe',
   port: 'Casebook-Setup-0.1.1.exe', // portable build not uploaded yet — installer covers it
@@ -112,7 +115,7 @@ const $ = id => document.getElementById(id);
 const set = (id, f) => { const el = $(id); if (!FILES[f]) { el.closest('a,button') && (el.closest('a,button').style.opacity = '.45'); el.textContent += ' — soon'; return; } el.href = `${RELEASES}/${FILES[f]}`; };
 set('dl-win','win'); set('dl-port','port'); set('dl-mac','mac'); set('dl-lin','lin'); set('dl-apk','apk');
 $('subscribe').href = CHECKOUT;
-$('price-mo').textContent = PRICE_MO; $('price-yr').textContent = PRICE_YR;
+$('price-mo').textContent = PRICE_MO; $('price-yr').textContent = PRICE_YR; $('price-lt').textContent = PRICE_LT;
 
 const ua = navigator.userAgent, plat = navigator.platform || '';
 const isAndroid = /android/i.test(ua);
