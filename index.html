@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Casebook — evidence organizer for family court</title>
+<meta name="description" content="Local-only evidence organizer for self-represented parents in family court. Your records never leave your devices.">
+<style>
+  :root{--bg:#0e1420;--card:#16202f;--ink:#dfe7f0;--dim:#8fa3b8;--acc:#4da3ff;--acc2:#37c48a;--line:#26374d}
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 18px 64px}
+  h1{font-size:2rem;letter-spacing:-.5px}
+  .tag{color:var(--dim);margin:8px 0 28px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin:14px 0}
+  .pick{display:flex;gap:10px;margin:6px 0 16px}
+  .pick button{flex:1;padding:16px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:1rem;cursor:pointer}
+  .pick button.on{border-color:var(--acc);background:#123055;box-shadow:0 0 0 1px var(--acc) inset}
+  .dl{display:block;width:100%;padding:15px;margin:10px 0;border-radius:10px;border:0;background:var(--acc);color:#fff;font-size:1.05rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none}
+  .dl.alt{background:#1d2c42;border:1px solid var(--line);color:var(--ink);font-weight:500}
+  .dl.dis{background:#1d2c42;color:var(--dim);cursor:default;border:1px dashed var(--line);font-weight:400}
+  .note{color:var(--dim);font-size:.88rem;margin:6px 2px}
+  .soon{color:var(--dim);font-style:italic}
+  .price{display:flex;gap:12px;flex-wrap:wrap}
+  .price div{flex:1;min-width:150px;border:1px solid var(--line);border-radius:10px;padding:16px;text-align:center}
+  .price b{font-size:1.6rem;display:block}
+  .hl{border-color:var(--acc2)!important}
+  .trust{font-size:.85rem;color:var(--dim);margin-top:20px;line-height:1.7}
+  .trust b{color:var(--ink)}
+  footer{margin-top:36px;color:var(--dim);font-size:.8rem;border-top:1px solid var(--line);padding-top:16px}
+  a{color:var(--acc)}
+  .rec{color:var(--acc2);font-size:.8rem;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Casebook</h1>
+  <p class="tag">An evidence organizer for family court — built for self-represented parents.
+  Everything stays on your devices. No account, no cloud, no one else can read your records.</p>
+
+  <div class="card">
+    <h2>Download</h2>
+    <div class="pick">
+      <button id="pick-pc" class="on" onclick="pick('pc')">💻 Computer</button>
+      <button id="pick-mob" onclick="pick('mob')">📱 Phone / tablet</button>
+    </div>
+
+    <div id="pc">
+      <a class="dl" id="dl-win" href="#">Download for Windows <span id="rec-win" class="rec"></span></a>
+      <a class="dl alt" id="dl-mac" href="#">macOS <span id="rec-mac" class="rec"></span></a>
+      <a class="dl alt" id="dl-lin" href="#">Linux (AppImage) <span id="rec-lin" class="rec"></span></a>
+      <a class="dl alt" id="dl-port" href="#">Windows portable (USB-stick, no install)</a>
+      <p class="note">Works offline after install. If Windows SmartScreen warns on an unsigned
+      build, choose “More info → Run anyway” — the app is safe, code signing is on the roadmap.</p>
+    </div>
+
+    <div id="mob" hidden>
+      <a class="dl" id="dl-apk" href="#">Android app (APK)</a>
+      <p class="note">Android will ask to allow “install from unknown sources” — normal for a
+      direct-download app. Play Store / F-Droid listing is on the roadmap.</p>
+      <a class="dl dis" href="#" onclick="return false">iPhone / iPad — <span class="soon">coming soon</span></a>
+      <p class="note">An iPhone companion is in development. For now the computer app can pull
+      photos and messages from any device over your home network.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Try it free for 14 days</h2>
+    <p>The download <b>is</b> the trial — full features, no card, no sign-up. When the trial
+    ends your cases still open, verify, and export; a subscription keeps creating and importing
+    turned on.</p>
+    <div class="price">
+      <div class="hl"><b id="price-mo">$–</b>per month<br><span class="note">cancel anytime</span></div>
+      <div><b id="price-yr">$–</b>per year<br><span class="note">~2 months free</span></div>
+    </div>
+    <a class="dl" id="subscribe" href="#">Subscribe</a>
+    <p class="note">After checkout you get a license key by email. Paste it into the app’s
+    License tab — it’s verified on your device, nothing phones home.</p>
+  </div>
+
+  <div class="trust">
+    <b>What “local-only” means here:</b> your evidence files are sealed with SHA-256 fingerprints
+    on your own machine. The app never sends your records anywhere. The only optional network
+    feature — anchoring a hash to a public timestamp — asks first and sends only the hash, never a file.
+  </div>
+
+  <footer>
+    Casebook is an organizer, not a lawyer. Reports are drafts and review aids, not legal advice.
+    Family law differs everywhere — always check your local rules.
+    <br><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms of use</a>
+  </footer>
+</div>
+
+<script>
+// ── EDIT THESE BEFORE DEPLOYING ─────────────────────────────────────────────
+// Point RELEASES at wherever the built files are hosted. If you use GitHub
+// Releases, the URL pattern is already correct — just fill in owner + repo.
+const RELEASES = 'https://github.com/OWNER/REPO/releases/latest/download';
+const CHECKOUT = 'https://casebook.app/subscribe';   // payment page / provider link
+const PRICE_MO = '$6';                              // set your real prices
+const PRICE_YR = '$60';
+const FILES = {
+  win:  'Casebook-Setup.exe',     // NSIS installer (rename on upload, or keep the versioned name)
+  port: 'Casebook-Portable.exe',  // portable exe
+  mac:  'Casebook.dmg',
+  lin:  'Casebook.AppImage',
+  apk:  'Casebook.apk',
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
+const $ = id => document.getElementById(id);
+const set = (id, f) => { $(id).href = `${RELEASES}/${FILES[f]}`; };
+set('dl-win','win'); set('dl-port','port'); set('dl-mac','mac'); set('dl-lin','lin'); set('dl-apk','apk');
+$('subscribe').href = CHECKOUT;
+$('price-mo').textContent = PRICE_MO; $('price-yr').textContent = PRICE_YR;
+
+const ua = navigator.userAgent, plat = navigator.platform || '';
+const isAndroid = /android/i.test(ua);
+const isIOS = /iphone|ipad|ipod/i.test(ua);
+const isMac = /mac/i.test(plat) && !isIOS;
+const isLinux = /linux/i.test(plat) && !isAndroid;
+
+function pick(which){
+  $('pc').hidden = which !== 'pc'; $('mob').hidden = which !== 'mob';
+  $('pick-pc').classList.toggle('on', which === 'pc');
+  $('pick-mob').classList.toggle('on', which === 'mob');
+}
+// Auto-pick the right tab + flag the likely download
+if (isAndroid || isIOS) pick('mob');
+if (isMac) $('rec-mac').textContent = '· probably you';
+else if (isLinux) $('rec-lin').textContent = '· probably you';
+else if (!isAndroid && !isIOS) $('rec-win').textContent = '· probably you';
+</script>
+</body>
+</html>
